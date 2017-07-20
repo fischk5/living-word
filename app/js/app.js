@@ -45,9 +45,8 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
   // Setup the GET request $http call
   dataFactory.updateVerse = function(passageSearchString) {
-    let finalUrl = "";
-    bibleDisplay.reference = passageSearchString;
-  }
+    bibleDisplay.search = passageSearchString;
+  };
 
   // Simple return of the object
   dataFactory.getVerse = function() {
@@ -67,20 +66,16 @@ appModule.controller('SearchController', ['$scope', 'dataFactory',
 
     $scope.bibleDisplay = dataFactory.getVerse();
 
+    // Setting up the watch service to run update verse
+    // anytime the input changes
+    $scope.$watch('passageInput', function() {
+      $scope.updateVerse();
+    })
+
     $scope.updateVerse = function() {
-      let searchInput = $scope.passageInput;
-      dataFactory.updateVerse(searchInput);
+      //let searchInput = $scope.passageInput;
+      dataFactory.updateVerse($scope.passageInput);
     }
-
-    // Use the factory to retrieve a passage.  The passage retrieved
-    // is based on the search string in the input
-    // function getVerse() {
-    //   let passageInput = $scope.passageInput;
-    //   $scope.bibleDisplay = dataFactory.getVerse(passageInput);
-    //   $scope.reference = data.passageReference;
-    //   $scope.content = data.passageContent;
-    // }
-
 
   }
 ]);
