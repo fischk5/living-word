@@ -25,7 +25,7 @@
     <div class="nav-item" id="nav-search">
       <h2 id="display-searcher">Search the Bible</h2>
       <div class="dropdown-content horizontal">
-        <input type="text" placeholder="Enter passage  (e.g. John 3:16)" id="search-passage">
+        <input type="text" ng-model="passageInput" ng-change="updateVerse()" placeholder="Enter passage  (e.g. John 3:16)" id="search-passage">
       </div>
     </div>
 
@@ -38,7 +38,7 @@
   <!-- VERSE DISPLAY AREA PLACEHOLDER -->
   <div>
     <!-- Placeholder for the view -->
-    <div data-ng-view class="verse-area">
+    <div data-ng-view>
     </div>
   </div>
 

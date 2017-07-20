@@ -9,9 +9,10 @@ Built using jQuery & AngularJS
 
 Version 1.0
 
-Questions?  Contact me:
+Questions?  Comments?
+Contact me:
 email:    fischk5@hotmail.com
-github:   fischk5
+github handle:   fischk5
 
 //////////////////////////////////////////
 //////////////////////////////////////////
@@ -21,59 +22,80 @@ github:   fischk5
 /*  SETUP ANGULAR MODULE */
 
 // initialize the module with no dependencies
-let appModule = angular.module('application', []);
+let appModule = angular.module('application', ['ngRoute']);
+
+
+
 
 /*  SETUP ANGULAR FACTORY */
 appModule.factory('dataFactory', ['$http', function($http) {
 
+  // This is the bible verse object that will be updated
+  // and read from for display
+  let bibleDisplay = {
+    'reference' : 'John: 3:16',
+    'content' : 'For God so loved the world that He gave His only Son...',
+    'search' : 'none'
+  };
+
   // Base url for the labs.bible.org API call
   let urlBase = 'http://labs.bible.org/api/?';
-
   // Object to be returned after factory is called
   let dataFactory = {};
 
   // Setup the GET request $http call
-  dataFactory.getVerse = function(passageSearchString) {
+  dataFactory.updateVerse = function(passageSearchString) {
     let finalUrl = "";
-    // need to parse the passage search string and make a GET call
-    return $http.get(finalUrl);
+    bibleDisplay.reference = passageSearchString;
+  }
+
+  // Simple return of the object
+  dataFactory.getVerse = function() {
+    return bibleDisplay;
   }
 
   // Return the dataFactory object
   return dataFactory;
 }])
 
+
+
+
 /*  SETUP ANGULAR MAIN CONTROLLER */
-appModule.controller('MainController', ['$scope', 'dataFactory',
+appModule.controller('SearchController', ['$scope', 'dataFactory',
   function($scope, dataFactory) {
+
+    $scope.bibleDisplay = dataFactory.getVerse();
+
+    $scope.updateVerse = function() {
+      let searchInput = $scope.passageInput;
+      dataFactory.updateVerse(searchInput);
+    }
 
     // Use the factory to retrieve a passage.  The passage retrieved
     // is based on the search string in the input
-    function getVerse() {
-      let passageInput = $scope.passageInput;
-      dataFactory.getVerse(passageInput)
-      .then(function(response) {
-        // Do something with the response
-        // like update the $scope
-      }, function(error) {
-        // Do something with the error
-        // like maintain certain ui
-      });
-    }
+    // function getVerse() {
+    //   let passageInput = $scope.passageInput;
+    //   $scope.bibleDisplay = dataFactory.getVerse(passageInput);
+    //   $scope.reference = data.passageReference;
+    //   $scope.content = data.passageContent;
+    // }
 
 
   }
 ]);
 
-
-/*  ESTABLISH UI FUNCTIONALITY  */
-// The "Search the Bible" link should display a search bar
-// on hover, but this needs to stay visible until the user
-// is away from it for a certain number of seconds
-
-// Setup a browser listener to add the visible class to
-// the class "dropdown-content" upon hovering over searchNavigationDropdown
-// document.getElementById('nav-search').addEventListener('mouseover', function (event) {
-//   // Select the dropdown-content class that should become visible
-//   $('.dropdown-content').addClass('isVisible');
-// })
+/*  SETUP ANGULAR ROUTING */
+appModule.config(function($routeProvider,$locationProvider) {
+  $locationProvider.hashPrefix('');
+  $routeProvider
+  .when("/", {
+    controller: 'SearchController',
+    templateUrl: 'partials/display-verse.html'
+  })
+  .when("/view2", {
+    controller: 'SearchController',
+    templateUrl: 'partials/view2.html'
+  })
+  .otherwise({redirectTo: "/"});
+})
