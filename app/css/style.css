@@ -111,8 +111,19 @@ NAVIGATION ELEMENTS ////////////////////
   display: block;
 }
 
+#nav-search:hover h2,
+#nav-votd:hover h2,
+#nav-random:hover h2 {
+  color: black;
+}
+
 #display-searcher {
   cursor: default;
+}
+
+#nav-votd,
+#nav-random {
+  cursor: pointer;
 }
 
 #search-passage {
