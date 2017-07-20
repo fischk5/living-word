@@ -23,16 +23,48 @@ github:   fischk5
 // initialize the module with no dependencies
 let appModule = angular.module('application', []);
 
-// Establish a blank object literal to hold controllers
-let controllers = {};
+/*  SETUP ANGULAR FACTORY */
+appModule.factory('dataFactory', ['$http', function($http) {
 
-// Create the app controller
-controllers.MainController = function($scope) {
+  // Base url for the labs.bible.org API call
+  let urlBase = 'http://labs.bible.org/api/?';
 
-}
+  // Object to be returned after factory is called
+  let dataFactory = {};
 
-// Initialize the controllers in the appModule
-appModule.controller(controllers);
+  // Setup the GET request $http call
+  dataFactory.getVerse = function(passageSearchString) {
+    let finalUrl = "";
+    // need to parse the passage search string and make a GET call
+    return $http.get(finalUrl);
+  }
+
+  // Return the dataFactory object
+  return dataFactory;
+}])
+
+/*  SETUP ANGULAR MAIN CONTROLLER */
+appModule.controller('MainController', ['$scope', 'dataFactory',
+  function($scope, dataFactory) {
+
+    // Use the factory to retrieve a passage.  The passage retrieved
+    // is based on the search string in the input
+    function getVerse() {
+      let passageInput = $scope.passageInput;
+      dataFactory.getVerse(passageInput)
+      .then(function(response) {
+        // Do something with the response
+        // like update the $scope
+      }, function(error) {
+        // Do something with the error
+        // like maintain certain ui
+      });
+    }
+
+
+  }
+]);
+
 
 /*  ESTABLISH UI FUNCTIONALITY  */
 // The "Search the Bible" link should display a search bar
