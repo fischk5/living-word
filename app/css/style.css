@@ -10,8 +10,16 @@
   font-family: 'zocial', sans-serif;
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+  max-width: 100%;
+}
+
 body {
-  margin: 0;
+  margin-bottom: 80px; /* bottom = footer height */
+  max-width: 100%;
+  background-color: antiquewhite;
 }
 
 h1 {
@@ -30,13 +38,17 @@ h4 {
   color: slategrey;
 }
 
+p {
+  font-size: 14px;
+}
+
 .header {
   margin: auto;
   background-color: moccasin;
   padding-top: 1em;
   padding-bottom: 10px;
   padding-left: 20px;
-  width: 100%;
+  max-width: 100%;
 }
 
 .navigation {
@@ -47,4 +59,48 @@ h4 {
 
 .nav-item {
   width: 33%;
+}
+
+.verse-area {
+
+}
+
+.footer {
+  color: grey;
+  display: flex;
+  width: 100%;
+  background-color: black;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 80px; /* !Must match the body bottom margin */
+  overflow: hidden;
+}
+
+.footer-item {
+  color: inherit;
+}
+
+.zocials {
+  display:flex;
+  float: right;
+}
+
+.zocial-email,
+.zocial-linkedin,
+.fontawesome-github {
+  font-size: 20px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+#copyright {
+  padding-left: 1em;
+  width: 40%;
+}
+
+#developer-info {
+  padding-right: 1em;
+  width: 60%;
+  text-align: right;
 }
