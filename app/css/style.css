@@ -9,3 +9,26 @@
 [class*="zocial-"]:before {
   font-family: 'zocial', sans-serif;
 }
+
+body {
+  margin: 0;
+}
+
+h1 {
+  color: royalblue;
+  margin: 0;
+}
+
+h4 {
+  margin: 0;
+  color: grey;
+}
+
+.header {
+  margin: auto;
+  background-color: moccasin;
+  padding-top: 1em;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  width: 100%;
+}
