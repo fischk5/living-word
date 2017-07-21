@@ -38,6 +38,16 @@ appModule.config(function($sceDelegateProvider) {
 /*  SETUP ANGULAR FACTORY */
 appModule.factory('dataFactory', ['$http', function($http) {
 
+  // Used for data verification
+  let bibleBooks = [
+    'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings',
+    '2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalm','Proverbs','Ecclesiastes','Song of Solomon',
+    'Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum',
+    'Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians',
+    'Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus',
+    'Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'
+  ];
+
   // This is the bible verse object that will be updated
   // and read from for display
   let bibleDisplay = {
@@ -100,6 +110,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
           // 2. Verify the there is a colon in the search pattern
           if (search.includes(':')) {
             let passageSplit = search.split(':')
+            // TODO: verify the book is a book of the bible
             colonIndex = search.indexOf(':');
             // 3. Verify the there is only one colon
             if (passageSplit.length == 2) {
@@ -111,6 +122,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
                   if(parseInt(search[colonIndex + 1])) {
                     // The verse passes!
                     // The entry contains at least one valid entry
+                    // TODO: Add function to parse the book name and verse reference out
                     validVerses.push(search);
                     console.log('Added verse - ' + search);
                   }
@@ -162,6 +174,26 @@ appModule.factory('dataFactory', ['$http', function($http) {
     ////////////////////////////////
     */
 
+    let updateUi = function() {
+      // Update the bibleDisplay with the staged information
+      let referenceString = "";
+      let contentString = "";
+      for (var y=0; y < stagedReferences.length; y++) {
+        referenceString += " " + stagedReferences[y]
+      };
+      for (var h=0; h < stagedContent.length; h++) {
+        contentString += " " + stagedContent[h];
+      };
+      if (!referenceString == "") {
+        bibleDisplay.reference = referenceString;
+      }
+      if (!contentString == "") {
+        bibleDisplay.content = contentString;
+      }
+      stagedReferences = [];
+      stagedContent = [];
+    }
+
     //
     // Now only the verses in verseToRetrieveAjax need AJAX calls
     // If successful, will store the results in the bibleVersesStorage
@@ -169,49 +201,47 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     // This function will call the API for any verses in verseToRetrieveAjax
     let makeAjaxCalls = function() {
-      console.log('Initiating AJAX calls.');
       // Base url for the labs.bible.org API call
       let urlBase = 'http://labs.bible.org/api/?passage=';
       let urlTail = '&formatting=plain&type=json';
       // loop through the versesToRetrieve and build a URL
-      for (var p = verseToRetrieveAjax.length; p >=0; p--) {
-        let verseToRetrieve = verseToRetrieveAjax[p];
-        let url = urlBase + verseToRetrieve + urlTail;
-        console.log('Built url = ' + url);
+      if (verseToRetrieveAjax.length) {
+        console.log('Initiating AJAX call.');
+        for (var p = verseToRetrieveAjax.length; p >=0; p--) {
+          let verseToRetrieve = verseToRetrieveAjax[p];
+          let url = urlBase + verseToRetrieve + urlTail;
+          console.log('Built url = ' + url);
 
-        // Actual AJAX call
-        $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
-          let dRef = data.data[0].bookname + " " + data.data[0].chapter + ':' + data.data[0].verse;
-          console.log('Reference is ' + dRef);
-          let dContent = data.data[0].text;
-          console.log('Content is ' + dContent);
+          // Actual AJAX call
+          $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
+            let dRef = data.data[0].bookname + " " + data.data[0].chapter + ':' + data.data[0].verse;
+            console.log('Reference is ' + dRef);
+            let dContent = data.data[0].text;
+            console.log('Content is ' + dContent);
 
-          // TODO: Error handling!
+            // TODO: Error handling!
 
-          // TODO: format the content to remove the <> tags
+            // TODO: format the content to remove the <> tags
 
-          // Add this information to the staged data
-          stagedReferences.push(dRef);
-          stagedContent.push(dContent);
+            // Add this information to the staged data
+            stagedReferences.push(dRef);
+            stagedContent.push(dContent);
 
-          // Add this information to the bibleVerseStorage
-          bibleVerseStorage.push({reference : dRef, content: dContent });
+            // Add this information to the bibleVerseStorage
+            bibleVerseStorage.push({reference : dRef, content: dContent });
 
-
-          // Now that information is received, remove verse this from the verseToRetrieveAjax
-          verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
-          /* END FOR LOOP */
-        });
+            // Now that information is received, remove verse this from the verseToRetrieveAjax
+            verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
+            /* END FOR LOOP */
+            if (!verseToRetrieveAjax.length) {
+              updateUi();
+            }
+          });
+        }
+      } else {
+        updateUi();
       }
     }
-
-    //
-    // If there are no verses in versesToRetrieve, push the staged data
-    // to the scope for display
-    // while (verseToRetrieveAjax.length != 0) {
-    //   // Make AJAX calls for verses to retrieve
-    //
-    // }
 
     /*
     /////////////////////////////////
@@ -219,7 +249,11 @@ appModule.factory('dataFactory', ['$http', function($http) {
     ////////////////////////////////
     */
 
-    // Don't update the display if the reference hasn't changed
+    //
+    // If there are no verses in versesToRetrieve, push the staged data
+    // to the scope for display
+    makeAjaxCalls();
+
 
   };
 
