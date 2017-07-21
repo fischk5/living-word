@@ -22,12 +22,13 @@ html {
   position: relative;
   min-height: 100%;
   max-width: 100%;
+  margin: 0;
 }
 
 body {
   margin-bottom: 80px; /* bottom = footer height */
   max-width: 100%;
-  background-color: antiquewhite;
+  background-color: black;
 }
 
 h1 {
@@ -60,7 +61,7 @@ HEADER ELEMENTS ////////////////////
 
 .header {
   margin: auto;
-  background-color: moccasin;
+  background-color: #c5ccd3;
   padding-top: 1em;
   padding-bottom: 10px;
   padding-left: 20px;
@@ -145,7 +146,29 @@ NAVIGATION ELEMENTS ////////////////////
 MAIN DISPLAY AREA ////////////////////
 */
 
-.verse-area {
+.verse-display {
+  width: 100%;
+}
+
+.display-content {
+  font-size: 3em;
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4em;
+  color: white;
+
+}
+
+.display-reference {
+  text-align: right;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4em;
+  font-size: 1.6em;
+  color: white;
 
 }
 
