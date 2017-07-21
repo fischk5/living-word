@@ -217,6 +217,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
             let dRef = data.data[0].bookname + " " + data.data[0].chapter + ':' + data.data[0].verse;
             console.log('Reference is ' + dRef);
             let dContent = data.data[0].text;
+            dContent = dContent.split('<a style')[0];
             console.log('Content is ' + dContent);
 
             // TODO: Error handling!
