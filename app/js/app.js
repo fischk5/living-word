@@ -79,7 +79,6 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     // Take the search term and pull out all applicable verses
     let validateVerse = function(string) {
-      console.log('Validating verse...');
       let colonIndex = -1;
       let searchTerms = [];
       let searchString = string.trim();
@@ -123,6 +122,12 @@ appModule.factory('dataFactory', ['$http', function($http) {
       }
     }
 
+
+
+    validateVerse(passageSearchString);
+
+
+
     /*
     //////////////////////////
     -2.  CHECK LOCAL STORAGE FOR INFORMATION-
@@ -139,11 +144,12 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     for (var m=0; m < validVerses.length; m++) {
       let vers = validVerses[m];
-      for (var j=o; j < bibleVerseStorage.length; j++) {
+      for (var j=0; j < bibleVerseStorage.length; j++) {
         if (bibleVerseStorage[j].reference == vers) { // if the storage reference name matches the verse
           stagedReferences.push(bibleVerseStorage[j].reference); // push the existing reference
           stagedContent.push(bibleVerseStorage[j].content); // push the existing content
           verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(vers),1); // remove that verse - does not need retrieving
+          console.log('Staged References: ' + stagedContent);
         }
       }
     }
@@ -185,7 +191,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
           stagedReferences.push(dRef);
           stagedContent.push(dContent);
 
-          // Now that information is received, pop this from the versesToRetrieve
+          // Now that information is received, remove verse this from the verseToRetrieveAjax
           verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
           /* END FOR LOOP */
         });
