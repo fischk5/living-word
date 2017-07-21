@@ -80,7 +80,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
     // Take the search term and pull out all applicable verses
     let validateVerse = function(string) {
       let colonIndex = -1;
-      let searchTerms = [];
+      let searchTerms = []; // used if there are multiple verses separated by ;
       let searchString = string.trim();
       // Check if there exists a semicolon separating the verses
       if (searchString.includes(';')) {
@@ -122,9 +122,9 @@ appModule.factory('dataFactory', ['$http', function($http) {
       }
     }
 
-
-
-    validateVerse(passageSearchString);
+    if (passageSearchString) {
+      validateVerse(passageSearchString);
+    }
 
 
 
@@ -144,6 +144,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     for (var m=0; m < validVerses.length; m++) {
       let vers = validVerses[m];
+      console.log(vers);
       for (var j=0; j < bibleVerseStorage.length; j++) {
         if (bibleVerseStorage[j].reference == vers) { // if the storage reference name matches the verse
           stagedReferences.push(bibleVerseStorage[j].reference); // push the existing reference
@@ -201,10 +202,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
     //
     // If there are no verses in versesToRetrieve, push the staged data
     // to the scope for display
-    while (verseToRetrieveAjax.length != 0) {
-      // Make AJAX calls for verses to retrieve
-
-    }
+    // while (verseToRetrieveAjax.length != 0) {
+    //   // Make AJAX calls for verses to retrieve
+    // 
+    // }
 
     /*
     /////////////////////////////////
