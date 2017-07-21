@@ -39,8 +39,9 @@ appModule.factory('dataFactory', ['$http', function($http) {
     'validVerse' : ''
   };
 
-  // Base url for the labs.bible.org API call
-  let urlBase = 'http://labs.bible.org/api/?';
+  // Store all bible objects in here previously retrieved from AJAX
+  let bibleVerseStorage = [];
+
   // Object to be returned after factory is called
   let dataFactory = {};
 
@@ -102,12 +103,59 @@ appModule.factory('dataFactory', ['$http', function($http) {
         }
       }
     }
-
     /*
     /////////////////////////
     -END SEARCH VERIFICATION-
     ////////////////////////
     */
+
+    /*
+    /////////////////////////////////
+    -AJAX CALL TO LABS.BIBLE.ORG API-
+    ////////////////////////////////
+    */
+    // No need to make AJAX request if the verse has already been
+    // requested and exists in the factory
+
+    // Need to make a request for every verse in the validVerses
+    // if it doesn't already exist
+    // Create a bible object for each valid verse (valid in formatting only)
+    // bible objects are stored in bibleVerseStorage and contain:
+    // - Scripture Reference (John 3:16)
+    // - Scripture Content (For God so loved...)
+
+    // Stage the display verses in array
+    let stagedReferences = [];
+    let stagedContent = [];
+
+    // Remove existing verses from this to leave only verse that need
+    // an AJAX call
+    let verseToRetrieveAjax = validVerses;
+
+    //
+    // First check if any of the verses in validVerses are in the bibleVerseStorage
+    for (var m=0; m < validVerses.length; m++) {
+      let vers = validVerses[m];
+      for (var j=o; j < bibleVerseStorage.length; j++) {
+        if (bibleVerseStorage[j].reference == vers) { // if the storage reference name matches the verse
+          stagedReferences.push(bibleVerseStorage[j].reference); // push the existing reference
+          stagedContent.push(bibleVerseStorage[j].content); // push the existing content
+          verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(vers),1); // remove that verse - does not need retrieving
+        }
+      }
+    }
+
+    //
+    // Now only the verses in verseToRetrieveAjax need AJAX calls
+    // If successful, will store the results in the bibleVersesStorage
+    // with two properties: reference & content
+
+
+    // Base url for the labs.bible.org API call
+    let urlBase = 'http://labs.bible.org/api/?';
+
+
+
 
     //bibleDisplay.search = passageSearchString;
   };
