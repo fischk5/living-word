@@ -24,6 +24,14 @@ github handle:   fischk5
 // initialize the module with no dependencies
 let appModule = angular.module('application', ['ngRoute']);
 
+appModule.config(function($sceDelegateProvider) {
+  $sceDelegateProvider.resourceUrlWhitelist([
+    'self',
+    // Allow loading from labs.bible.org/api
+    'http://labs.bible.org/api/?**'
+  ]);
+});
+
 
 
 
@@ -49,6 +57,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
   dataFactory.updateVerse = function(passageSearchString) {
     // Do not make an AJAX if there is not a valid verse
     // The last valid verse used for AJAX is stored in bibleDisplay.validVerse
+    console.log('updating verse...');
 
     /*
     ////////////////////
@@ -150,12 +159,21 @@ appModule.factory('dataFactory', ['$http', function($http) {
     // If successful, will store the results in the bibleVersesStorage
     // with two properties: reference & content
 
-
     // Base url for the labs.bible.org API call
     let urlBase = 'http://labs.bible.org/api/?';
+    let sampleUrl = "http://labs.bible.org/api/?passage=John%203:16&formatting=plain&type=json";
 
+    var callback = function(result) {
+      // TODO: make this silly function fire with data!!!!
+      console.log('we got here at least');
+      console.log(result);
+    }
 
+    console.log('About to fire this thang...');
 
+    $http.jsonp(sampleUrl, {jsonpCallbackParam: 'callback'}).then(function(data) {
+      console.log(data.data[0].bookname); //this gives the bookname
+    });
 
     //bibleDisplay.search = passageSearchString;
   };
