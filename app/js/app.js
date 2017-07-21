@@ -150,7 +150,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
           stagedReferences.push(bibleVerseStorage[j].reference); // push the existing reference
           stagedContent.push(bibleVerseStorage[j].content); // push the existing content
           verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(vers),1); // remove that verse - does not need retrieving
-          console.log('Staged References: ' + stagedContent);
+          console.log('Staged References: ' + stagedReferences);
         }
       }
     }
@@ -186,11 +186,17 @@ appModule.factory('dataFactory', ['$http', function($http) {
           let dContent = data.data[0].text;
           console.log('Content is ' + dContent);
 
+          // TODO: Error handling!
+
           // TODO: format the content to remove the <> tags
 
           // Add this information to the staged data
           stagedReferences.push(dRef);
           stagedContent.push(dContent);
+
+          // Add this information to the bibleVerseStorage
+          bibleVerseStorage.push({reference : dRef, content: dContent });
+
 
           // Now that information is received, remove verse this from the verseToRetrieveAjax
           verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
@@ -204,7 +210,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
     // to the scope for display
     // while (verseToRetrieveAjax.length != 0) {
     //   // Make AJAX calls for verses to retrieve
-    // 
+    //
     // }
 
     /*
@@ -212,6 +218,8 @@ appModule.factory('dataFactory', ['$http', function($http) {
     -4.  UPDATE THE DISPLAY
     ////////////////////////////////
     */
+
+    // Don't update the display if the reference hasn't changed
 
   };
 
