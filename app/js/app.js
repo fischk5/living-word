@@ -48,7 +48,13 @@ appModule.factory('dataFactory', ['$http', function($http) {
   };
 
   // Store all bible objects in here previously retrieved from AJAX
-  let bibleVerseStorage = [];
+  // Objects included have a .reference and a .content
+  let bibleVerseStorage = [
+    {
+    reference : "John 3:16",
+    content: "For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life."
+    }
+  ];
 
   // Object to be returned after factory is called
   let dataFactory = {};
@@ -159,21 +165,54 @@ appModule.factory('dataFactory', ['$http', function($http) {
     // If successful, will store the results in the bibleVersesStorage
     // with two properties: reference & content
 
-    // Base url for the labs.bible.org API call
-    let urlBase = 'http://labs.bible.org/api/?';
-    let sampleUrl = "http://labs.bible.org/api/?passage=John%203:16&formatting=plain&type=json";
+    //
+    // If there are no verses in versesToRetrieve, push the staged data
+    // to the scope for display
+    while (verseToRetrieveAjax.length != 0) {
+      // Make AJAX calls for verses to retrieve
 
-    var callback = function(result) {
-      // TODO: make this silly function fire with data!!!!
-      console.log('we got here at least');
-      console.log(result);
     }
 
-    console.log('About to fire this thang...');
+    // Base url for the labs.bible.org API call
+    let urlBase = 'http://labs.bible.org/api/?';
+    let sampleUrl = "http://labs.bible.org/api/?passage=John%203:17&formatting=plain&type=json";
 
-    $http.jsonp(sampleUrl, {jsonpCallbackParam: 'callback'}).then(function(data) {
-      console.log(data.data[0].bookname); //this gives the bookname
-    });
+    // This function will call the API for any verses in verseToRetrieveAjax
+    let makeAjaxCalls = function() {
+      console.log('About to fire this thang...');
+      // Base url for the labs.bible.org API call
+      let urlBase = 'http://labs.bible.org/api/?passage=';
+      let urlTail = '&formatting=plain&type=json';
+      // loop through the versesToRetrieve and build a URL
+      for (var p = verseToRetrieveAjax.length; p >=0; p--) {
+        let verseToRetrieve = verseToRetrieveAjax[p];
+        let url = urlBase + verseToRetrieve + urlTail;
+        console.log('Built url = ' + url);
+
+        // Actual AJAX call
+        $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
+          let dRef = data.data[0].bookname + " " + data.data[0].chapter + ':' + data.data[0].verse;
+          console.log('Reference is ' + dRef);
+          let dContent = data.data[0].text;
+          console.log('Content is ' + dContent);
+
+          // TODO: format the content to remove the <> tags
+
+          // Add this information to the staged data
+          stagedReferences.push(dRef);
+          stagedContent.push(dContent);
+
+          // Now that information is received, pop this from the versesToRetrieve
+          verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
+
+          //bibleDisplay.reference = dRef;
+          //bibleDisplay.content = dContent;
+        });
+
+      }
+
+    }
+
 
     //bibleDisplay.search = passageSearchString;
   };
