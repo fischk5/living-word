@@ -59,16 +59,19 @@ appModule.factory('dataFactory', ['$http', function($http) {
   // Object to be returned after factory is called
   let dataFactory = {};
 
-  // Setup the GET request $http call
+
   dataFactory.updateVerse = function(passageSearchString) {
+    // This fires anytime the search bar changes
+    // 1. Validate the search string to see if valid verse
+    // 2. Check storage to see if the information exists locally
+    // 3. GET remaining information via AJAX call to API if needed
+    // 4. Update the bibleDisplay object with information
     // Do not make an AJAX if there is not a valid verse
-    // The last valid verse used for AJAX is stored in bibleDisplay.validVerse
-    console.log('updating verse...');
 
     /*
-    ////////////////////
-    -SEARCH VERIFICATION-
-    ///////////////////
+    //////////////////////////
+    -1.  SEARCH VERIFICATION-
+    /////////////////////////
     */
 
     // Valid verses are stored in the following variable
@@ -76,6 +79,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     // Take the search term and pull out all applicable verses
     let validateVerse = function(string) {
+      console.log('Validating verse...');
       let colonIndex = -1;
       let searchTerms = [];
       let searchString = string.trim();
@@ -118,26 +122,12 @@ appModule.factory('dataFactory', ['$http', function($http) {
         }
       }
     }
+
     /*
+    //////////////////////////
+    -2.  CHECK LOCAL STORAGE FOR INFORMATION-
     /////////////////////////
-    -END SEARCH VERIFICATION-
-    ////////////////////////
     */
-
-    /*
-    /////////////////////////////////
-    -AJAX CALL TO LABS.BIBLE.ORG API-
-    ////////////////////////////////
-    */
-    // No need to make AJAX request if the verse has already been
-    // requested and exists in the factory
-
-    // Need to make a request for every verse in the validVerses
-    // if it doesn't already exist
-    // Create a bible object for each valid verse (valid in formatting only)
-    // bible objects are stored in bibleVerseStorage and contain:
-    // - Scripture Reference (John 3:16)
-    // - Scripture Content (For God so loved...)
 
     // Stage the display verses in array
     let stagedReferences = [];
@@ -147,8 +137,6 @@ appModule.factory('dataFactory', ['$http', function($http) {
     // an AJAX call
     let verseToRetrieveAjax = validVerses;
 
-    //
-    // First check if any of the verses in validVerses are in the bibleVerseStorage
     for (var m=0; m < validVerses.length; m++) {
       let vers = validVerses[m];
       for (var j=o; j < bibleVerseStorage.length; j++) {
@@ -160,26 +148,21 @@ appModule.factory('dataFactory', ['$http', function($http) {
       }
     }
 
+
+    /*
+    /////////////////////////////////
+    -3.  AJAX CALL TO LABS.BIBLE.ORG API-
+    ////////////////////////////////
+    */
+
     //
     // Now only the verses in verseToRetrieveAjax need AJAX calls
     // If successful, will store the results in the bibleVersesStorage
     // with two properties: reference & content
 
-    //
-    // If there are no verses in versesToRetrieve, push the staged data
-    // to the scope for display
-    while (verseToRetrieveAjax.length != 0) {
-      // Make AJAX calls for verses to retrieve
-
-    }
-
-    // Base url for the labs.bible.org API call
-    let urlBase = 'http://labs.bible.org/api/?';
-    let sampleUrl = "http://labs.bible.org/api/?passage=John%203:17&formatting=plain&type=json";
-
     // This function will call the API for any verses in verseToRetrieveAjax
     let makeAjaxCalls = function() {
-      console.log('About to fire this thang...');
+      console.log('Initiating AJAX calls.');
       // Base url for the labs.bible.org API call
       let urlBase = 'http://labs.bible.org/api/?passage=';
       let urlTail = '&formatting=plain&type=json';
@@ -204,17 +187,25 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
           // Now that information is received, pop this from the versesToRetrieve
           verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
-
-          //bibleDisplay.reference = dRef;
-          //bibleDisplay.content = dContent;
+          /* END FOR LOOP */
         });
-
       }
+    }
+
+    //
+    // If there are no verses in versesToRetrieve, push the staged data
+    // to the scope for display
+    while (verseToRetrieveAjax.length != 0) {
+      // Make AJAX calls for verses to retrieve
 
     }
 
+    /*
+    /////////////////////////////////
+    -4.  UPDATE THE DISPLAY
+    ////////////////////////////////
+    */
 
-    //bibleDisplay.search = passageSearchString;
   };
 
   // Simple return of the object
