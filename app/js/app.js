@@ -35,7 +35,8 @@ appModule.factory('dataFactory', ['$http', function($http) {
   let bibleDisplay = {
     'reference' : 'John: 3:16',
     'content' : 'For God so loved the world that He gave His only Son...',
-    'search' : 'none'
+    'search' : 'none',
+    'validVerse' : ''
   };
 
   // Base url for the labs.bible.org API call
@@ -45,7 +46,70 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
   // Setup the GET request $http call
   dataFactory.updateVerse = function(passageSearchString) {
-    bibleDisplay.search = passageSearchString;
+    // Do not make an AJAX if there is not a valid verse
+    // The last valid verse used for AJAX is stored in bibleDisplay.validVerse
+
+    /*
+    ////////////////////
+    -SEARCH VERIFICATION-
+    ///////////////////
+    */
+
+    // Valid verses are stored in the following variable
+    let validVerses = [];
+
+    // Take the search term and pull out all applicable verses
+    let validateVerse = function(string) {
+      let colonIndex = -1;
+      let searchTerms = [];
+      let searchString = string.trim();
+      // Check if there exists a semicolon separating the verses
+      if (searchString.includes(';')) {
+        var splitSearch = searchString.split(';');
+        for (var i=0; i < splitSearch.length; i++) {
+          searchTerms.push(splitSearch[i]);
+        }
+      } else {
+        searchTerms.push(searchString);
+      };
+
+      for (var n=0; n < searchTerms.length; n++) {
+        var search = searchTerms[n];
+        search = search.trim();
+        // 1. Verify the search term is at least 4 characters
+        if (search.length >= 4) {
+          // 2. Verify the there is a colon in the search pattern
+          if (search.includes(':')) {
+            let passageSplit = search.split(':')
+            colonIndex = search.indexOf(':');
+            // 3. Verify the there is only one colon
+            if (passageSplit.length == 2) {
+              // 4. Verify there is a space somewhere before the colon
+              if (passageSplit[0].includes(" ") || passageSplit[0].includes("  ")) {
+                // 5. Verify there is a number before the colon
+                if (parseInt(search[colonIndex - 1])) {
+                  // 6. Verify there is a number after the colon
+                  if(parseInt(search[colonIndex + 1])) {
+                    // The verse passes!
+                    // The entry contains at least one valid entry
+                    validVerses.push(search);
+                    console.log('Added verse - ' + search);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /*
+    /////////////////////////
+    -END SEARCH VERIFICATION-
+    ////////////////////////
+    */
+
+    //bibleDisplay.search = passageSearchString;
   };
 
   // Simple return of the object
