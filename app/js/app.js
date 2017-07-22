@@ -39,6 +39,7 @@ appModule.config(function($sceDelegateProvider) {
 appModule.factory('dataFactory', ['$http', function($http) {
 
   // Used for data verification
+  // TODO: Make these objects and add the totol chapters in each
   let bibleBooks = [
     'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings',
     '2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalm','Proverbs','Ecclesiastes','Song of Solomon',
@@ -52,7 +53,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
   // and read from for display
   let bibleDisplay = {
     'reference' : 'John: 3:16',
-    'content' : 'For God so loved the world that He gave His only Son...',
+    'content' : 'For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.',
     'search' : 'none',
     'validVerse' : ''
   };
