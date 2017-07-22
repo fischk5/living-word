@@ -39,17 +39,6 @@ appModule.config(function($sceDelegateProvider) {
 appModule.factory('dataFactory', ['$http', function($http) {
 
   // Used for data verification
-  // TODO: Make these objects and add the totol chapters in each
-  let bibleBooks = [
-    'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth','1 Samuel','2 Samuel','1 Kings',
-    '2 Kings','1 Chronicles','2 Chronicles','Ezra','Nehemiah','Esther','Job','Psalm','Proverbs','Ecclesiastes','Song of Solomon',
-    'Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel','Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum',
-    'Habakkuk','Zephaniah','Haggai','Zechariah','Malachi','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians',
-    'Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy','Titus',
-    'Philemon','Hebrews','James','1 Peter','2 Peter','1 John','2 John','3 John','Jude','Revelation'
-  ];
-
-  // Used for data verification
   var bibleBooks = [
     {'book' : 'Genesis', 'chapters' : 50}, {'book' : 'Exodus', 'chapters' : 40}, {'book' : 'Leviticus', 'chapters' : 27}, {'book' : 'Numbers', 'chapters' : 36},
     {'book' : 'Deuteronomy', 'chapters' : 34}, {'book' : 'Joshua', 'chapters' : 24}, {'book' : 'Judges', 'chapters' : 21}, {'book' : 'Ruth', 'chapters' : 4},
@@ -74,9 +63,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
   // and read from for display
   let bibleDisplay = {
     'reference' : 'John: 3:16',
-    'content' : 'For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.',
-    'search' : 'none',
-    'validVerse' : ''
+    'content' : 'For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.'
   };
 
   // Store all bible objects in here previously retrieved from AJAX
@@ -116,14 +103,20 @@ appModule.factory('dataFactory', ['$http', function($http) {
       let searchString = string.trim();
       // Check if there exists a semicolon separating the verses
       if (searchString.includes(';')) {
+        // Split the search term at the semicolon for separate evaluation
         var splitSearch = searchString.split(';');
         for (var i=0; i < splitSearch.length; i++) {
+          // Add the individual search terms to the array searchTerms
           searchTerms.push(splitSearch[i]);
         }
       } else {
+        // If there is no semicolon, just add to searchTerms anyway as the
+        // only entry
         searchTerms.push(searchString);
       };
 
+      // Loop through all entries added to searchTerms to see if they
+      // pass verification
       for (var n=0; n < searchTerms.length; n++) {
         var search = searchTerms[n];
         search = search.trim();
@@ -132,9 +125,8 @@ appModule.factory('dataFactory', ['$http', function($http) {
           // 2. Verify the there is a colon in the search pattern
           if (search.includes(':')) {
             let passageSplit = search.split(':')
-            // TODO: verify the book is a book of the bible
             colonIndex = search.indexOf(':');
-            // 3. Verify the there is only one colon
+            // 3. Verify there is only one colon
             if (passageSplit.length == 2) {
               // 4. Verify there is a space somewhere before the colon
               if (passageSplit[0].includes(" ") || passageSplit[0].includes("  ")) {
@@ -143,10 +135,18 @@ appModule.factory('dataFactory', ['$http', function($http) {
                   // 6. Verify there is a number after the colon
                   if(parseInt(search[colonIndex + 1])) {
                     // The verse passes!
-                    // The entry contains at least one valid entry
-                    // TODO: Add function to parse the book name and verse reference out
-                    validVerses.push(search);
-                    console.log('Added verse - ' + search);
+                    // 7. Check that book is a book of the bible
+                    if (isBookOfBible(search)) {
+                      validVerses.push(search); // TODO: Delete when finished transitioning
+                      console.log('Added verse - ' + search);
+                      // 8. Since book is valid, parse the book and reference
+                      // as an object to be used in the search
+                      // Push the object to validVerses (has book and scripture)
+
+                      /* THIS WILL BREAK EVERYTHING - UNCOMMENT WHEN READY TO UNLEASH
+                      validVerses.push(getBookAndReference (search));
+                      */
+                    }
                   }
                 }
               }
@@ -155,6 +155,40 @@ appModule.factory('dataFactory', ['$http', function($http) {
         }
       }
     }
+    /* SEARCH VERIFICATION FUNCTIONS */
+
+    var getSearchBookName = function (mSearch) {
+      var mBook = "";
+      // Pull out the potential book name
+      potentialBook = mSearch.trim();
+      // parses the text from a string to see if it matches an entry in bibleBooks
+      // format of argument is a string "XXXXXX #:#" where X could be numbers or letters
+      var spaceIndex = potentialBook.lastIndexOf(" ");
+      // Now check that a space was found
+      // and assign the bookString to be checked to that entry
+      if (spaceIndex > 3) { // Make sure the space isn't for a 1 Peter or something like that
+        mBook = potentialBook.slice(0, spaceIndex).trim();
+      }
+      return mBook;
+    }
+
+    var isBookOfBible = function (potentialBook) {
+
+      var isBook = false; // this value will be returned at end of function
+
+      for (var i = bibleBooks.length-1; i >= 0; i--) {
+        if (bibleBooks[i].book.toUpperCase() == potentialBook.toUpperCase()) {
+          isBook = true;
+          break;
+        }
+      }
+      return isBook;
+    }
+
+    var getValidBookAndReference = function (mSearch) {
+      // parse the search to return object that includes book and scripture reference
+    }
+    /* END SEARCH VERIFICATION FUNCTIONS */
 
     if (passageSearchString) {
       validateVerse(passageSearchString);
@@ -174,10 +208,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
 
     // Remove existing verses from this to leave only verse that need
     // an AJAX call
-    let verseToRetrieveAjax = validVerses;
+    let verseToRetrieveAjax = validVerses;////////////////////////////////////////!!!!!!
 
-    for (var m=0; m < validVerses.length; m++) {
-      let vers = validVerses[m];
+    for (var m=0; m < validVerses.length; m++) { ////////////////////////////////////////!!!!!!
+      let vers = validVerses[m];////////////////////////////////////////!!!!!!
       console.log(vers);
       for (var j=0; j < bibleVerseStorage.length; j++) {
         if (bibleVerseStorage[j].reference == vers) { // if the storage reference name matches the verse
