@@ -70,9 +70,9 @@ appModule.factory('dataFactory', ['$http', function($http) {
   // Objects included have a .reference and a .content
   let bibleVerseStorage = [
     {
-    book : "John",
-    scripture: "3:16"
-    content: "For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life."
+    'book' : "John",
+    'scripture': "3:16",
+    'content': "For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life."
     }
   ];
 
@@ -137,14 +137,14 @@ appModule.factory('dataFactory', ['$http', function($http) {
                   if(parseInt(search[colonIndex + 1])) {
                     // The verse passes!
                     // 7. Check that book is a book of the bible
-                    let searchBook = getSearchBookName(search);
-                    console.log(searchBook);
+                    var searchBook = getSearchBookName(search);
+                    //console.log(searchBook);
                     if (isBookOfBible(searchBook)) {
                       // 8. Since book is valid, parse the book and reference
                       // as an object to be used in the search
                       // Push the object to validVerses (has book and scripture)
                       var searchReference = getSearchReference(search, searchBook);
-                      console.log(searchReference);
+                      console.log('Pushing ' + searchBook + ' ' + searchReference + ' to validVerses');
                       validVerses.push({'book':searchBook, 'scripture':searchReference}); // insert object into validVerses
                     }
                   }
@@ -205,34 +205,44 @@ appModule.factory('dataFactory', ['$http', function($http) {
     */
 
     // Stage the display verses in array
-    let stagedReferences = [];
-    let stagedContent = [];
     let stagedBibleObjects = [];
 
     // Remove existing verses from this to leave only verse that need
     // an AJAX call
     let verseToRetrieveAjax = validVerses;
 
-    for (var m = 0; m < validVerses.length; m++) {
-      // Check the bibleVerseStorage to see if this object is already stored
-      for (var j=0; j < bibleVerseStorage.length; j++) {
-        // must match the book and scripture properties to be the same
-        if (validVerses[m].book == bibleVerseStorage[j].book && validVerses[m].scripture == bibleVerseStorage[j].scripture) {
-          // this verse is already in storage -
-          // add it to the stagedBibleObjects and remove it from the verseToTretrieveAjax
-          console.log('Staging ' + validVerses[m].book + ' ' + validVerses[m].scripture + ' from storage...');
+    if (validVerses.length) {
+      console.log('The initial state of validVerses ' + validVerses.length);
+      for (var m = 0; m < validVerses.length; m++) {
+        //console.log('Valid verse loop ' + (m+1) + ' of ' + validVerses.length+ ' (Index ' + m + ')');
+        // Check the bibleVerseStorage to see if this object is already stored
+        for (var j=0; j < bibleVerseStorage.length; j++) {
+          //console.log('bibleVerseStorage loop ' + (j+1) + ' of ' + bibleVerseStorage.length + ' (Index ' + j + ')');
+          // must match the book and scripture properties to be the same
+          if (validVerses[m].book == bibleVerseStorage[j].book && validVerses[m].scripture == bibleVerseStorage[j].scripture) {
+            // this verse is already in storage -
+            // add it to the stagedBibleObjects and remove it from the verseToTretrieveAjax
+            console.log('Staging ' + validVerses[m].book + ' ' + validVerses[m].scripture + ' from storage...');
 
-          // Add to the stagedBibleObjects
-          stagedBibleObjects.push(validVerses[m]);
-
-          // loop through verseToRetrieveAjax to find the object that does not need AJAXing
-          for (var g = 0; g < verseToRetrieveAjax.length; g++) {
-            if (validVerses[m].book == verseToRetrieveAjax[g].book && validVerses[m].scripture == verseToRetrieveAjax[g].scripture) {
-              // Remove the verse at index g from verseToRetrieveAjax
-              verseToRetrieveAjax.splice(g,1);
-              break;
+            // Add to the stagedBibleObjects
+            stagedBibleObjects.push(validVerses[m]);
+            console.log('Pushed ' + validVerses[m].book + ' ' + validVerses[m].scripture + ' to the staged objects');
+            // TODO: Find out what is greasing the validVerses
+            // loop through verseToRetrieveAjax to find the object that does not need AJAXing
+            for (var g = 0; g < verseToRetrieveAjax.length; g++) {
+              if (validVerses[m].book == verseToRetrieveAjax[g].book && validVerses[m].scripture == verseToRetrieveAjax[g].scripture) {
+                // Remove the verse at index g from verseToRetrieveAjax
+                console.log('Removing ' + verseToRetrieveAjax[g].book + ' ' + verseToRetrieveAjax[g].scripture + ' from AJAX call');
+                verseToRetrieveAjax.splice(g,1);
+                console.log('Remaining items in verseToRetrieveAjax is ' + verseToRetrieveAjax.length);
+                break;
+              }
             }
+          } else {
+            console.log('Not found in local storage at position ' + (j+1));
           }
+          console.log('finish bibleVerseStorage loop ' + (j+1) + ' of ' + bibleVerseStorage.length + ' (Index ' + j + ')');
+          console.log('The current state of validVerses ' + validVerses.length);
         }
       }
     }
@@ -248,20 +258,18 @@ appModule.factory('dataFactory', ['$http', function($http) {
       // Update the bibleDisplay with the staged information
       let referenceString = "";
       let contentString = "";
-      for (var y=0; y < stagedReferences.length; y++) {
-        referenceString += " " + stagedReferences[y]
-      };
-      for (var h=0; h < stagedContent.length; h++) {
-        contentString += " " + stagedContent[h];
-      };
+
+      for (var i=0; i < stagedBibleObjects.length; i++){
+        referenceString += stagedBibleObjects[i].book + " " + stagedBibleObjects[i].scripture + " ";
+        contentString += stagedBibleObjects[i].content + " ";
+      }
       if (!referenceString == "") {
         bibleDisplay.reference = referenceString;
       }
       if (!contentString == "") {
         bibleDisplay.content = contentString;
       }
-      stagedReferences = [];
-      stagedContent = [];
+      stagedBibleObjects = [];
     }
 
     //
@@ -276,33 +284,45 @@ appModule.factory('dataFactory', ['$http', function($http) {
       let urlTail = '&formatting=plain&type=json';
       // loop through the versesToRetrieve and build a URL
       if (verseToRetrieveAjax.length) {
-        console.log('Initiating AJAX call.');
-        for (var p = verseToRetrieveAjax.length; p >=0; p--) {
-          let verseToRetrieve = verseToRetrieveAjax[p];
+        //console.log(verseToRetrieveAjax);
+        for (var p = verseToRetrieveAjax.length-1; p >=0; p--) {
+          console.log('Initiating AJAX call for ' + verseToRetrieveAjax[p].book + ' ' + verseToRetrieveAjax[p].scripture);
+          let verseToRetrieve = verseToRetrieveAjax[p].book + '%20' + verseToRetrieveAjax[p].scripture;
           let url = urlBase + verseToRetrieve + urlTail;
           console.log('Built url = ' + url);
 
           // Actual AJAX call
           $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
-            let dRef = data.data[0].bookname + " " + data.data[0].chapter + ':' + data.data[0].verse;
-            console.log('Reference is ' + dRef);
-            let dContent = data.data[0].text;
-            dContent = dContent.split('<a style')[0];
-            console.log('Content is ' + dContent);
-
-            // TODO: Error handling!
-
-            // TODO: format the content to remove the <> tags
+            // NEED TO LOOP THROUGH ALL RETURNED INFORMATION
+            //console.log(data.data);
+            var mBookname = data.data[0].bookname;
+            var mScripture = "";
+            var mContent = "";
+            if (data.data.length > 1) {
+              mScripture = data.data[0].chapter + ":" + data.data[0].verse + '-' + data.data[data.data.length-1].verse;
+              for (var i = 0; i < data.data.length; i++) {
+                mContent += data.data[i].text.split('<a style')[0] + " ";
+              }
+            } else {
+              mScripture = data.data[0].chapter + ":" + data.data[0].verse;
+              mContent = data.data[0].text.split('<a style')[0];
+            }
 
             // Add this information to the staged data
-            stagedReferences.push(dRef);
-            stagedContent.push(dContent);
+            stagedBibleObjects.push({book: mBookname, scripture: mScripture, content: mContent});
 
             // Add this information to the bibleVerseStorage
-            bibleVerseStorage.push({reference : dRef, content: dContent });
+            bibleVerseStorage.push({book : mBookname, scripture: mScripture, content: mContent });
+            for (var r=0; r<bibleVerseStorage.length; r++) {
+              var nBook = bibleVerseStorage[r].book;
+              var nScripture = bibleVerseStorage[r].scripture;
+              var nContent = bibleVerseStorage[r].content;
+              console.log('Storage includes ' + nBook + ' ' + nScripture + ' ' + nContent);
+            }
 
             // Now that information is received, remove verse this from the verseToRetrieveAjax
-            verseToRetrieveAjax.splice(verseToRetrieveAjax.indexOf(verseToRetrieve));
+            // WARNING - THIS COULD BE UNSTABLE IF THE REQUESTS COME BACK AT DIFFERENT TIMES
+            verseToRetrieveAjax.splice(verseToRetrieveAjax[p]);
             /* END FOR LOOP */
             if (!verseToRetrieveAjax.length) {
               updateUi();
