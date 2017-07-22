@@ -136,16 +136,15 @@ appModule.factory('dataFactory', ['$http', function($http) {
                   if(parseInt(search[colonIndex + 1])) {
                     // The verse passes!
                     // 7. Check that book is a book of the bible
-                    if (isBookOfBible(search)) {
-                      validVerses.push(search); // TODO: Delete when finished transitioning
-                      console.log('Added verse - ' + search);
+                    let searchBook = getSearchBookName(search);
+                    console.log(searchBook);
+                    if (isBookOfBible(searchBook)) {
                       // 8. Since book is valid, parse the book and reference
                       // as an object to be used in the search
                       // Push the object to validVerses (has book and scripture)
-
-                      /* THIS WILL BREAK EVERYTHING - UNCOMMENT WHEN READY TO UNLEASH
-                      validVerses.push(getBookAndReference (search));
-                      */
+                      var searchReference = getSearchReference(search, searchBook);
+                      console.log(searchReference);
+                      validVerses.push({'book':searchBook, 'scripture':searchReference}); // insert object into validVerses
                     }
                   }
                 }
@@ -158,6 +157,7 @@ appModule.factory('dataFactory', ['$http', function($http) {
     /* SEARCH VERIFICATION FUNCTIONS */
 
     var getSearchBookName = function (mSearch) {
+      // Returns a string of the book name (valid or not)
       var mBook = "";
       // Pull out the potential book name
       potentialBook = mSearch.trim();
@@ -173,11 +173,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
     }
 
     var isBookOfBible = function (potentialBook) {
-
+      // Checks if the potentialBook is a book of the bible
       var isBook = false; // this value will be returned at end of function
-
       for (var i = bibleBooks.length-1; i >= 0; i--) {
-        if (bibleBooks[i].book.toUpperCase() == potentialBook.toUpperCase()) {
+        if (bibleBooks[i].book.toUpperCase() == potentialBook.toUpperCase()) { // case insensitive comparison
           isBook = true;
           break;
         }
@@ -185,8 +184,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
       return isBook;
     }
 
-    var getValidBookAndReference = function (mSearch) {
-      // parse the search to return object that includes book and scripture reference
+    var getSearchReference = function (mSearch, mBook) {
+      // parse the search to return scripture reference
+      // Assumed format is "book scripturechapter:scripturenumbers"
+      return mSearch.slice(mBook.length, mSearch.length).trim();
     }
     /* END SEARCH VERIFICATION FUNCTIONS */
 
