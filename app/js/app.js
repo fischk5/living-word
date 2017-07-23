@@ -80,9 +80,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
   let dataFactory = {};
 
   dataFactory.callVerseOfTheDay = function () {
-    // First clear out the input
-
     // Make AJAX call to API to retrieve VOTD
+    $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
+      
+    });
 
   }
 
@@ -381,9 +382,9 @@ appModule.controller('SearchController', ['$scope', 'dataFactory',
 
     // Setting up the watch service to run update verse
     // anytime the input changes
-    $scope.$watch('passageInput', function() {
-      $scope.updateVerse();
-    })
+    // $scope.$watch('passageInput', function() {
+    //   $scope.updateVerse();
+    // })
 
     $scope.getVotd = function() {
       console.log('clicked');
