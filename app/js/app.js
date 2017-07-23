@@ -79,6 +79,13 @@ appModule.factory('dataFactory', ['$http', function($http) {
   // Object to be returned after factory is called
   let dataFactory = {};
 
+  dataFactory.callVerseOfTheDay = function () {
+    // First clear out the input
+
+    // Make AJAX call to API to retrieve VOTD
+
+  }
+
 
   dataFactory.updateVerse = function(passageSearchString) {
     // This fires anytime the search bar changes
@@ -378,8 +385,13 @@ appModule.controller('SearchController', ['$scope', 'dataFactory',
       $scope.updateVerse();
     })
 
+    $scope.getVotd = function() {
+      console.log('clicked');
+      $('#search-passage').val("");
+      dataFactory.callVerseOfTheDay();
+    }
+
     $scope.updateVerse = function() {
-      //let searchInput = $scope.passageInput;
       dataFactory.updateVerse($scope.passageInput);
     }
 
