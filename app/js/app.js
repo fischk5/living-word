@@ -80,9 +80,53 @@ appModule.factory('dataFactory', ['$http', function($http) {
   let dataFactory = {};
 
   dataFactory.callVerseOfTheDay = function () {
+    //
+    var votdUrl = "http://labs.bible.org/api/?passage=votd";
+    let urlTail = '&formatting=plain&type=json';
+    let finalUrl = votdUrl + urlTail;
+    console.log('Built url: ' + finalUrl);
     // Make AJAX call to API to retrieve VOTD
-    $http.jsonp(url, {jsonpCallbackParam: 'callback'}).then(function(data) {
-      
+    $http.jsonp(finalUrl, {jsonpCallbackParam: 'callback'}).then(function(data) {
+      console.log(data.data);
+      var mBookname = data.data[0].bookname;
+      var mScripture = "";
+      var mContent = "";
+      mScripture = data.data[0].bookname + ' ' + data.data[0].chapter + ":" + data.data[0].verse;
+      mContent = data.data[0].text.split('<a style')[0];
+
+      if (!mScripture == "") {
+        bibleDisplay.reference = mScripture;
+      }
+      if (!mContent == "") {
+        bibleDisplay.content = mContent;
+      }
+
+    });
+
+  }
+
+  dataFactory.callRandomVerse = function () {
+    //
+    var votdUrl = "http://labs.bible.org/api/?passage=random";
+    let urlTail = '&formatting=plain&type=json';
+    let finalUrl = votdUrl + urlTail;
+    console.log('Built url: ' + finalUrl);
+    // Make AJAX call to API to retrieve VOTD
+    $http.jsonp(finalUrl, {jsonpCallbackParam: 'callback'}).then(function(data) {
+      console.log(data.data);
+      var mBookname = data.data[0].bookname;
+      var mScripture = "";
+      var mContent = "";
+      mScripture = data.data[0].bookname + ' ' + data.data[0].chapter + ":" + data.data[0].verse;
+      mContent = data.data[0].text.split('<a style')[0];
+
+      if (!mScripture == "") {
+        bibleDisplay.reference = mScripture;
+      }
+      if (!mContent == "") {
+        bibleDisplay.content = mContent;
+      }
+
     });
 
   }
@@ -390,6 +434,12 @@ appModule.controller('SearchController', ['$scope', 'dataFactory',
       console.log('clicked');
       $('#search-passage').val("");
       dataFactory.callVerseOfTheDay();
+    }
+
+    $scope.callRandomVerse = function() {
+      console.log('clicked');
+      $('#search-passage').val("");
+      dataFactory.callRandomVerse();
     }
 
     $scope.updateVerse = function() {
