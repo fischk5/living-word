@@ -1,7 +1,10 @@
 <div class="verse-display">
 
-  <h4 class="display-reference">{{bibleDisplay.reference}}</h4>
-  <hr>
-  <h1 class="display-content"> "{{bibleDisplay.content}}" </h1>
+  <div ng-repeat="verse in verses" class="verse-object">
+    
+    <h4 class="display-reference">{{verse.reference}}</h4>
+    <hr>
+    <h1 class="display-content"> -- {{verse.content}} -- </h1>
+  </div>
 
 </div>

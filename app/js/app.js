@@ -66,6 +66,9 @@ appModule.factory('dataFactory', ['$http', function($http) {
     'content' : 'For this is the way God loved the world: He gave his one and only Son, so that everyone who believes in him will not perish but have eternal life.'
   };
 
+  // This stores each of the verses that are meant to be displayed
+  let verses = [bibleDisplay];
+
   // Store all bible objects in here previously retrieved from AJAX
   // Objects included have a .reference and a .content
   let bibleVerseStorage = [
@@ -91,15 +94,18 @@ appModule.factory('dataFactory', ['$http', function($http) {
       var mBookname = data.data[0].bookname;
       var mScripture = "";
       var mContent = "";
-      mScripture = data.data[0].bookname + ' ' + data.data[0].chapter + ":" + data.data[0].verse;
-      mContent = data.data[0].text.split('<a style')[0];
 
-      if (!mScripture == "") {
-        bibleDisplay.reference = mScripture;
-      }
-      if (!mContent == "") {
-        bibleDisplay.content = mContent;
-      }
+      mScripture = data.data[0].bookname + ' ' + data.data[0].chapter + ":" + data.data[0].verse;
+      var text = data.data[0].text;
+      // Replace any existing HTML characters with their equivalents
+      while (text.includes("&#8211;")) {
+        text = text.replace("&#8211;", "-");
+      };
+
+      mContent = text.split('<a style')[0];
+      verses.length = 0;
+
+      verses[0] = {reference: mScripture, content: mContent};
 
     });
 
@@ -118,14 +124,14 @@ appModule.factory('dataFactory', ['$http', function($http) {
       var mScripture = "";
       var mContent = "";
       mScripture = data.data[0].bookname + ' ' + data.data[0].chapter + ":" + data.data[0].verse;
-      mContent = data.data[0].text.split('<a style')[0];
-
-      if (!mScripture == "") {
-        bibleDisplay.reference = mScripture;
-      }
-      if (!mContent == "") {
-        bibleDisplay.content = mContent;
-      }
+      var text = data.data[0].text;
+      // Replace any existing HTML characters with their equivalents
+      while (text.includes("&#8211;")) {
+        text = text.replace("&#8211;", "-");
+      };
+      mContent = text.split('<a style')[0];
+      verses.length = 0;
+      verses[0] = {reference: mScripture, content: mContent};
 
     });
 
@@ -318,14 +324,10 @@ appModule.factory('dataFactory', ['$http', function($http) {
       let contentString = "";
 
       for (var i=0; i < stagedBibleObjects.length; i++){
-        referenceString += stagedBibleObjects[i].book + " " + stagedBibleObjects[i].scripture + " ";
-        contentString += stagedBibleObjects[i].content + " ";
-      }
-      if (!referenceString == "") {
-        bibleDisplay.reference = referenceString;
-      }
-      if (!contentString == "") {
-        bibleDisplay.content = contentString;
+        referenceString = stagedBibleObjects[i].book + " " + stagedBibleObjects[i].scripture;
+        contentString = stagedBibleObjects[i].content;
+        // Add to the verses object
+        verses[i] = {reference: referenceString, content: contentString};
       }
       stagedBibleObjects = [];
     }
@@ -423,6 +425,11 @@ appModule.factory('dataFactory', ['$http', function($http) {
     return bibleDisplay;
   }
 
+  // Simple return of the object
+  dataFactory.getVerses = function() {
+    return verses;
+  }
+
   // Return the dataFactory object
   return dataFactory;
 }])
@@ -436,11 +443,7 @@ appModule.controller('SearchController', ['$scope', 'dataFactory',
 
     $scope.bibleDisplay = dataFactory.getVerse();
 
-    // Setting up the watch service to run update verse
-    // anytime the input changes
-    // $scope.$watch('passageInput', function() {
-    //   $scope.updateVerse();
-    // })
+    $scope.verses = dataFactory.getVerses();
 
     $scope.getVotd = function() {
       console.log('clicked');
