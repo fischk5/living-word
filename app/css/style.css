@@ -26,9 +26,9 @@ html {
 }
 
 body {
-  margin: 0 0 100px 0; /* bottom = footer height */
+  margin: 0 0 80px 0; /* bottom = footer height */
   max-width: 100%;
-  background-color: #C48F65;
+  background-color: grey;
 }
 
 h1 {
@@ -114,8 +114,7 @@ NAVIGATION ELEMENTS ////////////////////
 
 #search-passage {
   width: 100%;
-  height: 2em;
-  font-size: 1.2em;
+  height: 100%;
   text-overflow: ellipsis;
 }
 
@@ -127,26 +126,28 @@ MAIN DISPLAY AREA ////////////////////
   width: 100%;
 }
 
-.display-content {
-  font-size: 3em;
+.verse-display hr {
+  width: 20%;
+}
+
+.display-reference {
   text-align: center;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 4em;
+  margin-top: 2em;
+  font-size: 1.5em;
   color: white;
-
 }
 
-.display-reference {
-  text-align: right;
-  width: 100%;
+.display-content {
+  font-size: 1.5em;
+  text-align: center;
+  line-height: 1.6;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 4em;
-  font-size: 1.6em;
   color: white;
-
 }
 
 /*
@@ -162,7 +163,7 @@ FOOTER ELEMENTS ////////////////////
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 100px; /* !Must match the body bottom margin */
+  height: 80px; /* !Must match the body bottom margin */
   overflow: hidden;
   justify-content: space-between;
 }
