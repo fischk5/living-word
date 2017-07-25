@@ -356,13 +356,25 @@ appModule.factory('dataFactory', ['$http', function($http) {
             var mScripture = "";
             var mContent = "";
             if (data.data.length > 1) {
+              // If there are multiple verses in th API call result...
               mScripture = data.data[0].chapter + ":" + data.data[0].verse + '-' + data.data[data.data.length-1].verse;
               for (var i = 0; i < data.data.length; i++) {
-                mContent += data.data[i].text.split('<a style')[0] + " ";
+                var text = data.data[i].text;
+                // Replace any existing HTML characters with their equivalents
+                while (text.includes("&#8211;")) {
+                  text = text.replace("&#8211;", "-");
+                }
+                // Remove HTML tags
+                mContent += text.split('<a style')[0] + " ";
               }
             } else {
               mScripture = data.data[0].chapter + ":" + data.data[0].verse;
-              mContent = data.data[0].text.split('<a style')[0];
+              var text = data.data[0].text;
+              // Replace any existing HTML characters with their equivalents
+              while (text.includes("&#8211;")) {
+                text = text.replace("&#8211;", "-");
+              }
+              mContent = text.split('<a style')[0];
             }
 
             // Add this information to the staged data
