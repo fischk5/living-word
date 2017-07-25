@@ -22,13 +22,13 @@ html {
   position: relative;
   min-height: 100%;
   max-width: 100%;
-  margin: 0;
+  margin: 0 0 0 0;
 }
 
 body {
-  margin-bottom: 80px; /* bottom = footer height */
+  margin: 0 0 100px 0; /* bottom = footer height */
   max-width: 100%;
-  background-color: black;
+  background-color: #C48F65;
 }
 
 h1 {
@@ -60,6 +60,7 @@ HEADER ELEMENTS ////////////////////
 */
 
 .header {
+  box-sizing: border-box;
   margin: auto;
   background-color: #c5ccd3;
   padding-top: 1em;
@@ -74,12 +75,16 @@ NAVIGATION ELEMENTS ////////////////////
 
 .navigation {
   display: flex;
-  background-color: slategrey;
   width: 100%;
 }
 
 .nav-item {
-  width: 33%;
+  background-color: slategrey;
+  flex: 1;
+}
+
+.nav-item:hover {
+  background-color: #374048;
 }
 
 .horizontal {
@@ -92,30 +97,10 @@ NAVIGATION ELEMENTS ////////////////////
   display: inline-block;
 }
 
-/* Dropdown content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #444444;
-  min-width: 100%;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-/*Inputs inside the dropdown-content div */
-.dropdown-content input {
-  display: block;
-}
-
-/* Show the dropdown menu on hover */
-#nav-search:hover .dropdown-content {
-  display: block;
-}
-
 #nav-search:hover h2,
 #nav-votd:hover h2,
 #nav-random:hover h2 {
-  color: black;
+  color: orange;
 }
 
 #display-searcher {
@@ -132,14 +117,6 @@ NAVIGATION ELEMENTS ////////////////////
   height: 2em;
   font-size: 1.2em;
   text-overflow: ellipsis;
-}
-
-.isVisible {
-  display: block;
-}
-
-.isHidden {
-  display: none;
 }
 
 /*
@@ -179,22 +156,30 @@ FOOTER ELEMENTS ////////////////////
 .footer {
   color: grey;
   display: flex;
+  align-items: flex-end;
   width: 100%;
-  background-color: black;
+  background-color: #c5ccd3;
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 80px; /* !Must match the body bottom margin */
+  height: 100px; /* !Must match the body bottom margin */
   overflow: hidden;
+  justify-content: space-between;
 }
 
 .footer-item {
   color: inherit;
 }
 
+.footer-item:nth-child(1) {flex-basis: 40%;}
+.footer-item:nth-child(2) {flex-basis: 15%;}
+
 .zocials {
   display:flex;
-  float: right;
+}
+
+.zocials a {
+  flex:1;
 }
 
 .zocial-email,
@@ -202,17 +187,13 @@ FOOTER ELEMENTS ////////////////////
 .fontawesome-github {
   color: inherit;
   font-size: 20px;
-  margin-left: 8px;
-  margin-right: 8px;
 }
 
 #copyright {
   padding-left: 1em;
-  width: 40%;
 }
 
 #developer-info {
   padding-right: 1em;
-  width: 60%;
   text-align: right;
 }
