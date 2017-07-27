@@ -179,25 +179,35 @@ appModule.factory('dataFactory', ['$http', function($http) {
       for (var n=0; n < searchTerms.length; n++) {
         var search = searchTerms[n];
         search = search.trim();
+        //console.log('Search trimmed length is ' + search.length);
         // 1. Verify the search term is at least 4 characters
-        if (search.length >= 4) {
+        if (search.length >= 2) {
+          console.log('Search: "' + search + '" is greater than 2');
           // 2. Verify the there is a colon in the search pattern
           if (search.includes(':')) {
+            console.log('Search: "' + search + '" includes colon');
             let passageSplit = search.split(':')
             colonIndex = search.indexOf(':');
             // 3. Verify there is only one colon
             if (passageSplit.length == 2) {
+              console.log('Search: "' + search + '" includes only 1 colon');
               // 4. Verify there is a space somewhere before the colon
               if (passageSplit[0].includes(" ") || passageSplit[0].includes("  ")) {
+                console.log('Search: "' + search + '" has a space somewhere before the colon');
                 // 5. Verify there is a number before the colon
                 if (parseInt(search[colonIndex - 1])) {
+                  console.log('Search: "' + search + '" has a number before the colon');
                   // 6. Verify there is a number after the colon
                   if(parseInt(search[colonIndex + 1])) {
+                    console.log('Search: "' + search + '" has a number after the colon');
+                    console.log('Search: "' + search + '" passes verification');
                     // The verse passes!
                     // 7. Check that book is a book of the bible
                     var searchBook = getSearchBookName(search);
+                    console.log('Checking if ' + searchBook + ' is a book of the Bible');
                     //console.log(searchBook);
                     if (isBookOfBible(searchBook)) {
+                      console.log('Search: "' + searchBook + '" is book of the bible');
                       // 8. Since book is valid, parse the book and reference
                       // as an object to be used in the search
                       // Push the object to validVerses (has book and scripture)
@@ -220,12 +230,13 @@ appModule.factory('dataFactory', ['$http', function($http) {
       var mBook = "";
       // Pull out the potential book name
       potentialBook = mSearch.trim();
+      console.log('Potential book name is... ' + potentialBook);
       // parses the text from a string to see if it matches an entry in bibleBooks
       // format of argument is a string "XXXXXX #:#" where X could be numbers or letters
       var spaceIndex = potentialBook.lastIndexOf(" ");
       // Now check that a space was found
       // and assign the bookString to be checked to that entry
-      if (spaceIndex > 3) { // Make sure the space isn't for a 1 Peter or something like that
+      if (spaceIndex > 2) { // Make sure the space isn't for a 1 Peter or something like that
         mBook = potentialBook.slice(0, spaceIndex).trim();
       }
       return mBook;
