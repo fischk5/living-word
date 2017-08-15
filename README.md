@@ -10,4 +10,4 @@ in several different contexts for retrieval.  Previously fetched verses are stor
 verse verification function was created to ensure any API calls were valid, rather than making an API call for anything submitted by
 the input.
 
-The application also supports two features available throught the API: verse of the day retrieval, and random verse retrieval.
+The application also supports two features available through the API: verse of the day retrieval, and random verse retrieval.
